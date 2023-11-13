@@ -8,10 +8,10 @@ export async function fetchPlaces() {
 
   try {
     const data =
-      await sql<any>`SELECT places.id,places.p_name, places.image,AVG(ratings.rating_value) as rating
-    FROM places
-    JOIN ratings ON places.id = ratings.place_id
-    GROUP BY places.id`;
+      await sql<any>`SELECT places.id,places.p_name, places.image,AVG(p_comments.rate) as rating
+      FROM places
+      LEFT JOIN p_comments ON places.id = p_comments.place_id
+      GROUP BY places.id`;
     return data.rows;
   } catch (error) {
     console.error('Database Error:', error);
@@ -27,11 +27,11 @@ export async function fetchPlace(id?: string) {
   if (!id) return;
   try {
     const data =
-      await sql<any>`SELECT places.id,places.p_name, places.image,AVG(ratings.rating_value) as rating
+      await sql<any>`SELECT places.id,places.p_name, places.image,AVG(p_comments.rate) as rating
       FROM places
-      JOIN ratings ON places.id = ratings.place_id
-	  WHERE places.id=${id}
-	  GROUP BY places.id`;
+      LEFT JOIN p_comments ON places.id = p_comments.place_id
+      WHERE places.id=${id}
+      GROUP BY places.id`;
     return data.rows[0];
   } catch (error) {
     console.error('Database Error:', error);
@@ -45,7 +45,6 @@ export async function fetchComments(id?: string) {
   noStore();
 
   if (!id) return;
-  console.log(id, 'here');
   try {
     const data = await sql<any>`SELECT p_comments.id,p_comments.p_comment
       FROM p_comments
@@ -53,7 +52,6 @@ export async function fetchComments(id?: string) {
 	  WHERE places.id = ${id}`;
     return data.rows;
   } catch (error) {
-    console.log(id, 'here error');
     console.error('Database Error:', error);
     throw new Error('Failed to fetch comments data.');
   }

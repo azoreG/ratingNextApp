@@ -1,21 +1,30 @@
 import { StarIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 
-export default async function StarRating({ value }: { value: number }) {
+const StarRating = ({
+  value = 0,
+}: {
+  value: number;
+  readOnly?: boolean;
+  id?: string;
+}) => {
+  const initialRate = Math.round(value);
   return (
-    <div className="flex">
+    <div className="flex mb-2">
       {[...Array(5)].map((v, index) => {
-        const isDisabled = index >= value;
-        console.log(index, value);
+        const isDisabled = index >= initialRate;
         return (
-          <StarIcon
-            key={index}
-            className={clsx('h-10 w-10 text-yellow-500', {
-              '!text-gray-500': isDisabled,
-            })}
-          />
+          <div key={index}>
+            <StarIcon
+              className={clsx('h-10 w-10 text-yellow-500', {
+                '!text-gray-500': isDisabled,
+              })}
+            />
+          </div>
         );
       })}
     </div>
   );
-}
+};
+
+export default StarRating;
