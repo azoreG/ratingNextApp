@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { signIn } from '@/auth';
+const bcrypt = require('bcrypt');
+import { redirect } from 'next/navigation';
 
 const CommentSchema = z.object({
   id: z.string(),
@@ -14,10 +16,21 @@ const CommentSchema = z.object({
   }),
 });
 
+const UserSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
 const AddComment = CommentSchema.omit({
   id: true,
   user_id: true,
   place_id: true,
+});
+
+const AddUser = UserSchema.omit({
+  id: true,
 });
 
 export type State = {
@@ -41,8 +54,6 @@ export async function addComment(
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
-    console.log('error');
-    console.log(validatedFields.error.flatten().fieldErrors);
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Missing Fields. Failed to Create a comment.',
@@ -57,7 +68,6 @@ export async function addComment(
     VALUES (${place_id}, '410544b2-4001-4271-9855-fec4b6a6442a', ${p_comment}, ${rate})
     `;
   } catch (error) {
-    console.log('error', error);
     return { message: 'Database Error: Failed to Create a comment.' };
   }
 
@@ -77,4 +87,35 @@ export async function authenticate(
     }
     throw error;
   }
+}
+
+export async function signUp(prevState: State, formData: FormData) {
+  // Validate form using Zod
+  const validatedFields = AddUser.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+  });
+
+  // If form validation fails, return errors early. Otherwise, continue.
+  if (!validatedFields.success) {
+    return 'CredentialSignin';
+  }
+
+  const { name, email, password } = validatedFields.data;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await sql`
+    INSERT INTO users (name, email, password)
+        VALUES (${name}, ${email}, ${hashedPassword})
+        ON CONFLICT (id) DO NOTHING;
+    `;
+  } catch (error) {
+    console.log('error', error);
+    return 'CredentialSignin';
+  }
+
+  redirect('/login');
 }
