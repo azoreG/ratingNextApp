@@ -1,6 +1,4 @@
-import Sidebar from '../ui/sidebar/Sidebar';
 import { signOut } from '@/auth';
-import styles from './dashboard.module.css';
 
 export default function RootLayout({
   children,
@@ -27,16 +25,7 @@ export default function RootLayout({
           </form>
         </div>
       </div>
-      <div
-        className={`flex  flex-col md:flex-row p-6 h-full ${styles.container}`}
-      >
-        <div className="w-full mr-6 p-4 flex-none md:w-[394px] bg-white shadow">
-          <Sidebar />
-        </div>
-        <div className="flex-grow md:overflow-y-auto bg-white shadow">
-          {children}
-        </div>
-      </div>
+      {children}
     </div>
   );
 }
