@@ -55,6 +55,7 @@ export async function addComment(
     INSERT INTO p_comments (place_id, user_id, p_comment, rate)
     VALUES (${place_id}, '410544b2-4001-4271-9855-fec4b6a6442a', ${p_comment}, ${rate})
     `;
+    return { message: 'Success' };
   } catch (error) {
     console.log('error', error);
     return { message: 'Database Error: Failed to Create a comment.' };

@@ -7,7 +7,7 @@ import { useRef, useEffect } from 'react';
 import StarRatingSelector from './StarRatingSelector';
 
 export default function CommentForm({ place_id }: { place_id: string }) {
-  const initialState = { message: null, errors: {} };
+  const initialState = { message: '', errors: {} };
   const addCommentWithId = addComment.bind(null, place_id);
   const ref = useRef<HTMLFormElement>(null);
 
