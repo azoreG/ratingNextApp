@@ -89,7 +89,7 @@ export async function authenticate(
   }
 }
 
-export async function signUp(prevState: State, formData: FormData) {
+export async function signUp(prevState: string, formData: FormData) {
   // Validate form using Zod
   const validatedFields = AddUser.safeParse({
     name: formData.get('name'),

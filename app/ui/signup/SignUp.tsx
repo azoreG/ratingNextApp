@@ -11,7 +11,7 @@ import { useFormState, useFormStatus } from 'react-dom';
 import { signUp } from '@/app/lib/actions';
 
 export default function SignUp() {
-  const [code, action] = useFormState(signUp, undefined);
+  const [code, action] = useFormState(signUp, '');
 
   return (
     <form action={action} className="space-y-3">
