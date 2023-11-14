@@ -9,6 +9,7 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from '../button';
 import { useFormState, useFormStatus } from 'react-dom';
 import { authenticate } from '@/app/lib/actions';
+import Link from 'next/link';
 
 export default function LoginForm() {
   const [code, action] = useFormState(authenticate, undefined);
@@ -68,6 +69,12 @@ export default function LoginForm() {
               </p>
             </>
           )}
+        </div>
+        <div className="text-sm flex ">
+          <p className="mr-1">Don&apos;t have an account?</p>{' '}
+          <Link className="text-blue-500" href="/signup">
+            Sign up
+          </Link>
         </div>
       </div>
     </form>
