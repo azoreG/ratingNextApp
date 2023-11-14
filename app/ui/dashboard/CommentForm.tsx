@@ -22,7 +22,7 @@ export default function CommentForm({ place_id }: { place_id: string }) {
         name="p_comment"
         rows={5}
         cols={33}
-        className="w-full rounded-md border border-[#474748] mb-4"
+        className="w-full rounded-md border border-[#474748] mb-4 p-2"
         aria-describedby="comment-error"
         defaultValue=""
       ></textarea>

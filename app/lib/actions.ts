@@ -23,6 +23,13 @@ const UserSchema = z.object({
   password: z.string().min(6),
 });
 
+const PlaceSchema = z.object({
+  id: z.string().uuid(),
+  user_id: z.string().uuid(),
+  p_name: z.string(),
+  image: z.string().url(),
+});
+
 const AddComment = CommentSchema.omit({
   id: true,
   user_id: true,
@@ -33,7 +40,12 @@ const AddUser = UserSchema.omit({
   id: true,
 });
 
-export type State = {
+const AddPlace = PlaceSchema.omit({
+  id: true,
+  user_id: true,
+});
+
+export type CommentState = {
   errors?: {
     p_comment?: string[];
     rate?: string[];
@@ -41,9 +53,17 @@ export type State = {
   message?: string | null;
 };
 
+export type PlaceState = {
+  errors?: {
+    p_name?: string[];
+    image?: string[];
+  };
+  message?: string | null;
+};
+
 export async function addComment(
   place_id: string,
-  prevState: State,
+  prevState: CommentState,
   formData: FormData
 ) {
   // Validate form using Zod
@@ -73,6 +93,37 @@ export async function addComment(
 
   revalidatePath('/dashboard');
   return { message: 'Success' };
+}
+
+export async function createPlace(prevState: PlaceState, formData: FormData) {
+  // Validate form using Zod
+  const validatedFields = AddPlace.safeParse({
+    p_name: formData.get('p_name'),
+    image: formData.get('image'),
+  });
+
+  // If form validation fails, return errors early. Otherwise, continue.
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create a place.',
+    };
+  }
+
+  const { p_name, image } = validatedFields.data;
+
+  try {
+    await sql`
+    INSERT INTO places ( user_id, p_name, image)
+    VALUES ('410544b2-4001-4271-9855-fec4b6a6442a', ${p_name}, ${image})
+    `;
+  } catch (error) {
+    console.log(error);
+    return { message: 'Database Error: Failed to Create a place.' };
+  }
+
+  revalidatePath('/dashboard');
+  redirect('/dashboard');
 }
 
 export async function authenticate(

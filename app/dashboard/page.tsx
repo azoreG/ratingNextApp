@@ -26,25 +26,31 @@ export default async function Page({
       </div>
       <div className="flex-grow md:overflow-y-auto bg-white shadow">
         <main className="p-12">
-          <Image
-            src={image}
-            width={717}
-            height={477}
-            alt="Screenshot of the dashboard project showing mobile version"
-            className="mx-auto mb-9"
-          />
-          <div>
-            <div className="flex justify-between">
-              <h1>{p_name}</h1>
-              <StarRating value={rating} readOnly={true} id={placeId} />
+          {placeId ? (
+            <div>
+              <Image
+                src={image}
+                width={717}
+                height={477}
+                alt="Screenshot of the dashboard project showing mobile version"
+                className="mx-auto mb-9"
+              />
+              <div>
+                <div className="flex justify-between">
+                  <h1 className="text-2xl">{p_name}</h1>
+                  <StarRating value={rating} readOnly={true} id={placeId} />
+                </div>
+
+                <Suspense>
+                  <Comments id={placeId} />
+                </Suspense>
+
+                <CommentForm place_id={placeId} />
+              </div>
             </div>
-
-            <Suspense>
-              <Comments id={placeId} />
-            </Suspense>
-
-            <CommentForm place_id={placeId} />
-          </div>
+          ) : (
+            <h1>Select a place</h1>
+          )}
         </main>
       </div>
     </div>
