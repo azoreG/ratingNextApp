@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { signIn } from '@/auth';
 const bcrypt = require('bcrypt');
 import { redirect } from 'next/navigation';
+import { auth } from '../../auth';
 
 const CommentSchema = z.object({
   id: z.string(),
@@ -61,6 +62,15 @@ export type PlaceState = {
   message?: string | null;
 };
 
+const getUserId = async () => {
+  const session = await auth();
+  const {
+    user: { id },
+  } = (session as any) || {};
+
+  return id;
+};
+
 export async function addComment(
   place_id: string,
   prevState: CommentState,
@@ -81,11 +91,12 @@ export async function addComment(
   }
 
   const { p_comment, rate } = validatedFields.data;
+  const userId = await getUserId();
 
   try {
     await sql`
     INSERT INTO p_comments (place_id, user_id, p_comment, rate)
-    VALUES (${place_id}, '410544b2-4001-4271-9855-fec4b6a6442a', ${p_comment}, ${rate})
+    VALUES (${place_id}, ${userId}, ${p_comment}, ${rate})
     `;
   } catch (error) {
     return { message: 'Database Error: Failed to Create a comment.' };
@@ -111,11 +122,12 @@ export async function createPlace(prevState: PlaceState, formData: FormData) {
   }
 
   const { p_name, image } = validatedFields.data;
+  const userId = await getUserId();
 
   try {
     await sql`
     INSERT INTO places ( user_id, p_name, image)
-    VALUES ('410544b2-4001-4271-9855-fec4b6a6442a', ${p_name}, ${image})
+    VALUES (${userId}, ${p_name}, ${image})
     `;
   } catch (error) {
     console.log(error);

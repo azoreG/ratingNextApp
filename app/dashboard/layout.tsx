@@ -1,16 +1,28 @@
 import { signOut } from '@/auth';
 import Link from 'next/link';
+import { auth } from '../../auth';
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
+  const {
+    user: { name },
+  } = (session as any) || {};
+
+  function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
   return (
     <div className="bg-[#F2F3F3] h-screen">
       <div className="w-full bg-white shadow p-6 flex justify-between">
         <div className="text-[#265183]">
-          <h3 className="text-base">Hello, Bob!</h3>
+          <h3 className="text-base">{`Hello, ${capitalizeFirstLetter(
+            name
+          )}`}</h3>
           <h1 className="text-2xl">Welcome to the Rating App!</h1>
         </div>
         <div className="flex">
