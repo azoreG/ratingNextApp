@@ -25,7 +25,7 @@ const StarRating = ({ value = 0, id }: { value: number; id?: string }) => {
           </div>
         );
       })}
-      <input name="rate" type="text" defaultValue={rate} className="hidden" />
+      <input name="rate" type="text" value={rate} className="hidden" />
     </div>
   );
 };
