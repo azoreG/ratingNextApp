@@ -21,7 +21,7 @@ export default async function Page({
     <div
       className={`flex  flex-col md:flex-row p-6 h-full ${styles.container}`}
     >
-      <div className="w-full mr-6 p-4 flex-none md:w-[394px] bg-white shadow">
+      <div className="w-full mr-6 p-4 flex-none md:w-[394px] bg-white shadow overflow-y-auto">
         <Sidebar />
       </div>
       <div className="flex-grow md:overflow-y-auto bg-white shadow">
